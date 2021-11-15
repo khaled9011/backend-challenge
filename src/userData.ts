@@ -5,7 +5,7 @@ const users: Users = {
     username: 'khaled',
     password: 'helloworld',
     type: 'SELLER',
-    deposit: 30,
+    deposit: 0,
     id: 1,
   },
   2: {

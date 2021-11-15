@@ -24,4 +24,4 @@ const products: Products = {
   },
 };
 
-export default Products;
+export default products;

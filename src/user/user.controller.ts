@@ -15,9 +15,9 @@ export class UserController {
   }
 
   @Post('/buy/:id')
-  buy(@Param('id') userId, @Body() buyProductDTO: buyProductDTO) {
+  buy(@Param('id') userId: number, @Body() buyProductDTO: buyProductDTO) {
     const { productId, amount } = buyProductDTO;
-    return this.userService.buy(userId, amount, productId);
+    return this.userService.buy(userId, productId, amount);
   }
 
   @Post('/reset/:id')

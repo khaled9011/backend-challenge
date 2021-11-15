@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Product } from 'src/Models/product';
 import { Products } from 'src/Models/products';
 import users from 'src/userData';
@@ -6,7 +6,7 @@ import products from 'src/productsData';
 
 @Injectable()
 export class ProductsService {
-  products = products;
+  readonly products: Products = products;
 
   findAll() {
     return this.products;
@@ -17,11 +17,13 @@ export class ProductsService {
     if (product) {
       return product;
     }
-    return { error: 'No product with this ID found' };
+    throw new HttpException(
+      { error: 'No product with this ID found' },
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   create(product: Product) {
-    //check if sellerid exists and is type: SELLER
     const valid: boolean = this.validateCreate(product.sellerId);
     if (valid) {
       const id = new Date().valueOf();
@@ -31,7 +33,10 @@ export class ProductsService {
       };
       return;
     }
-    return { error: 'User does not exist or is not SELLER' };
+    throw new HttpException(
+      { error: 'User does not exist or is not SELLER' },
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   update(
@@ -56,7 +61,10 @@ export class ProductsService {
       this.products[id] = updated;
       return;
     }
-    return { error: 'User is not the seller of this product.' };
+    throw new HttpException(
+      { error: 'User is not the seller of this product.' },
+      HttpStatus.NOT_ACCEPTABLE,
+    );
   }
 
   delete(userId: number, productId: number) {
@@ -65,16 +73,19 @@ export class ProductsService {
       delete this.products[productId];
       return;
     }
-    return { error: 'User is not the seller of this product.' };
+    throw new HttpException(
+      { error: 'User is not the seller of this product.' },
+      HttpStatus.NOT_ACCEPTABLE,
+    );
   }
 
-  validateUpdate(userId: number, productId: number) {
+  private validateUpdate(userId: number, productId: number) {
     const user = users[userId];
     const product = this.products[productId];
     return user.id === product.sellerId;
   }
 
-  validateCreate(id: number): boolean {
+  private validateCreate(id: number): boolean {
     const user = users[id];
     if (user && user.type === 'SELLER') return true;
     return false;

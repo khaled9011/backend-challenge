@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from 'src/Models/user';
 import { Users } from 'src/Models/users';
 import users from 'src/userData';
@@ -24,7 +24,7 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new Error('Cannot Find User');
+    throw new HttpException('Cannot Find User', HttpStatus.NOT_ACCEPTABLE);
   }
 
   update(updatedUser: User, id: number) {
@@ -33,7 +33,7 @@ export class UsersService {
       this.users[id] = updatedUser;
       return;
     }
-    throw new Error('Cannot Find User');
+    throw new HttpException('Cannot Find User', HttpStatus.NOT_ACCEPTABLE);
   }
 
   delete(id: number): void {
@@ -42,6 +42,6 @@ export class UsersService {
       delete this.users[id];
       return;
     }
-    throw new Error('Cannot Find User');
+    throw new HttpException('Cannot Find User', HttpStatus.NOT_ACCEPTABLE);
   }
 }

@@ -1,6 +1,7 @@
+import { Type } from 'class-transformer';
 import { IsNumber, Min } from 'class-validator';
 
 export class buyProductDTO {
-  @IsNumber() productId: number;
-  @IsNumber() @Min(1) amount: number;
+  @IsNumber() @Type(() => Number) productId: number;
+  @IsNumber() @Type(() => Number) @Min(1) amount: number;
 }

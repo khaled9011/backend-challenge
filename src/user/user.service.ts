@@ -1,24 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Product } from 'src/Models/product';
 import { User } from 'src/Models/user';
-const users = require('../userData');
-const products = require('../productsData');
+import users from 'src/userData';
+import products from 'src/productsData';
 
 @Injectable()
 export class UserService {
   deposit(amount: number, id: number) {
     const user: User = users[id];
+    if (user.type === 'SELLER')
+      throw new HttpException(
+        { error: 'User is not of type BUYER' },
+        HttpStatus.BAD_REQUEST,
+      );
     if (user) {
-      user.deposit += amount;
+      user.deposit += +amount;
       return;
     }
-    return { message: 'user with this ID not found' };
+    throw new HttpException(
+      { error: 'user with this ID not found' },
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   buy(userId: number, productId: number, amount: number) {
     const product: Product = products[productId];
     if (product) {
       const user: User = users[userId];
+      if (user.type === 'SELLER')
+        throw new HttpException(
+          { error: 'User is not of type BUYER' },
+          HttpStatus.BAD_REQUEST,
+        );
       const totalPay = product.cost * amount;
       if (user.deposit >= totalPay) {
         user.deposit -= totalPay;
@@ -35,17 +48,32 @@ export class UserService {
           },
         };
       }
-      return { error: 'User does not have sufficient funds' };
+      throw new HttpException(
+        { error: 'User does not have sufficient funds' },
+        HttpStatus.NOT_ACCEPTABLE,
+      );
     }
-    return { error: 'Product with this ID does not Exist' };
+    throw new HttpException(
+      { error: 'Product with this ID does not Exist' },
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   reset(userId: number) {
     const user: User = users[userId];
+    if (user.type === 'SELLER')
+      throw new HttpException(
+        { error: 'User is not of type BUYER' },
+        HttpStatus.BAD_REQUEST,
+      );
     if (user) {
-      return (user.deposit = 0);
+      user.deposit = 0;
+      return;
     }
-    return { error: 'User with this ID not found' };
+    throw new HttpException(
+      { error: 'User with this ID not found' },
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   private calculateChange(total: number) {

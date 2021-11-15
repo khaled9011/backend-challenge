@@ -6,5 +6,5 @@ export class Product {
   @IsNumber() @Type(() => Number) cost: number;
   @IsString() productName: string;
   @IsNumber() @Type(() => Number) sellerId: number;
-  @IsOptional() @IsNumber() @Type(() => Number) id: number;
+  @IsNumber() @Type(() => Number) id: number;
 }

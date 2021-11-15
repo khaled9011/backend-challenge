@@ -7,6 +7,8 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import createUserDTO from 'src/DTO/createUserDTO';
+import updateUserDTO from 'src/DTO/updateUserDTO';
 import { User } from 'src/Models/user';
 import { Users } from 'src/Models/users';
 import { UsersService } from './users.service';
@@ -15,27 +17,29 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get()
-  async findAll(): Promise<Users> {
+  findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  async find(@Param('id') id: number): Promise<User> {
+  find(@Param('id') id: number) {
     return this.userService.find(id);
   }
 
   @Post()
-  async create(@Body() user: User): Promise<void> {
-    return this.userService.create(user);
+  create(@Body() userDTO: createUserDTO) {
+    const { username, password, type, deposit } = userDTO;
+    return this.userService.create(username, password, type, deposit);
   }
 
   @Put(':id')
-  async update(@Body() user: User, @Param('id') id: number): Promise<void> {
-    return this.userService.update(user, id);
+  update(@Body() userDTO: updateUserDTO, @Param('id') id: number) {
+    const { username, password } = userDTO;
+    return this.userService.update(username, password, id);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<void> {
+  delete(@Param('id') id: number) {
     return this.userService.delete(id);
   }
 }

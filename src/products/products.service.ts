@@ -23,15 +23,23 @@ export class ProductsService {
     );
   }
 
-  create(product: Product) {
-    const valid: boolean = this.validateCreate(product.sellerId);
+  create(
+    productName: string,
+    amountAvailable: number,
+    cost: number,
+    sellerId: number,
+  ) {
+    const valid: boolean = this.validateCreate(sellerId);
     if (valid) {
       const id = new Date().valueOf();
       this.products[id] = {
-        ...product,
+        productName,
+        amountAvailable,
+        cost,
+        sellerId,
         id,
       };
-      return;
+      return this.products[id];
     }
     throw new HttpException(
       { error: 'User does not exist or is not SELLER' },
@@ -59,7 +67,7 @@ export class ProductsService {
         sellerId: product.sellerId,
       };
       this.products[id] = updated;
-      return;
+      return this.products[id];
     }
     throw new HttpException(
       { error: 'User is not the seller of this product.' },
@@ -82,7 +90,7 @@ export class ProductsService {
   private validateUpdate(userId: number, productId: number) {
     const user = users[userId];
     const product = this.products[productId];
-    return user.id === product.sellerId;
+    return user && product ? user.id === product.sellerId : false;
   }
 
   private validateCreate(id: number): boolean {

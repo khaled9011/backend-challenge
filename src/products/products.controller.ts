@@ -7,8 +7,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import createProductDTO from 'src/DTO/createProductDTO';
+import deleteProductDTO from 'src/DTO/deleteProductDTO';
 import { updateProductDTO } from 'src/DTO/updateProductDTO';
-import { Product } from 'src/Models/product';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -26,27 +27,39 @@ export class ProductsController {
   }
 
   @Post()
-  async create(@Body() prodcut: Product) {
-    return this.productService.create(prodcut);
+  async create(@Body() prodcutDTO: createProductDTO) {
+    const { productName, amountAvailable, cost, sellerId }: createProductDTO =
+      prodcutDTO;
+
+    return this.productService.create(
+      productName,
+      amountAvailable,
+      cost,
+      sellerId,
+    );
   }
 
-  //asdasdasd
   @Put(':id')
   async update(
-    @Body() updateObject: updateProductDTO,
+    @Body() prodcutDTO: updateProductDTO,
     @Param('id') productId: number,
   ) {
+    const { productName, amountAvailable, cost, userId } = prodcutDTO;
     return this.productService.update(
       productId,
-      updateObject.cost,
-      updateObject.productName,
-      updateObject.amountAvailable,
-      updateObject.userId,
+      cost,
+      productName,
+      amountAvailable,
+      userId,
     );
   }
 
   @Delete(':id')
-  async delete(@Body() userId: number, @Param('id') productId: number) {
+  async delete(
+    @Body() productDTO: deleteProductDTO,
+    @Param('id') productId: number,
+  ) {
+    const { userId } = productDTO;
     return this.productService.delete(userId, productId);
   }
 }

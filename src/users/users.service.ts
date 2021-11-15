@@ -11,12 +11,21 @@ export class UsersService {
     return this.users;
   }
 
-  create(newUser: User) {
+  create(
+    username: string,
+    password: string,
+    type: 'BUYER' | 'SELLER',
+    deposit: number,
+  ) {
     const id = new Date().valueOf();
     this.users[id] = {
-      ...newUser,
+      username,
+      password,
+      type,
+      deposit,
       id,
     };
+    return this.users[id];
   }
 
   find(id: number) {
@@ -24,16 +33,17 @@ export class UsersService {
     if (user) {
       return user;
     }
-    throw new HttpException('Cannot Find User', HttpStatus.NOT_ACCEPTABLE);
+    throw new HttpException('Cannot Find User', HttpStatus.NOT_FOUND);
   }
 
-  update(updatedUser: User, id: number) {
+  update(username: string, password: string, id: number) {
     const user = this.users[id];
     if (user) {
-      this.users[id] = updatedUser;
-      return;
+      user.username = username ? username : user.username;
+      user.password = password ? password : user.password;
+      return user;
     }
-    throw new HttpException('Cannot Find User', HttpStatus.NOT_ACCEPTABLE);
+    throw new HttpException('Cannot Find User', HttpStatus.NOT_FOUND);
   }
 
   delete(id: number): void {
@@ -42,6 +52,6 @@ export class UsersService {
       delete this.users[id];
       return;
     }
-    throw new HttpException('Cannot Find User', HttpStatus.NOT_ACCEPTABLE);
+    throw new HttpException('Cannot Find User', HttpStatus.NOT_FOUND);
   }
 }

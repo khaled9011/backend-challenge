@@ -6,5 +6,5 @@ export class User {
   @IsString() password: string;
   @IsString() type: 'BUYER' | 'SELLER';
   @IsNumber() @Type(() => Number) deposit: number;
-  @IsOptional() @IsNumber() id: number;
+  @IsNumber() @Type(() => Number) id: number;
 }

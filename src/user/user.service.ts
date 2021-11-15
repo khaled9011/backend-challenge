@@ -14,8 +14,8 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     if (user) {
-      user.deposit += +amount;
-      return;
+      user.deposit += amount;
+      return user;
     }
     throw new HttpException(
       { error: 'user with this ID not found' },
@@ -68,7 +68,7 @@ export class UserService {
       );
     if (user) {
       user.deposit = 0;
-      return;
+      return user;
     }
     throw new HttpException(
       { error: 'User with this ID not found' },
